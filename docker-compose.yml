@@ -13,9 +13,7 @@ services:
       - postgresql
 
   postgresql:
-    build:
-      context: ./images
-      dockerfile: postgreswithdummydata.Dockerfile
+    image: postgres
     networks:
       - chungus
     ports:
@@ -26,6 +24,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: chungusbunguswungus
       POSTGRES_DB: db
+    volumes:
+      - ./init/:/docker-entrypoint-initdb.d/
 
   adminer:
     image: adminer
