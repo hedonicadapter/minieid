@@ -1,0 +1,43 @@
+services:
+  server:
+    image: golang
+    networks:
+      - chungus
+    command: "go run ."
+    working_dir: /app
+    volumes:
+      - ./server:/app
+    environment:
+      - DATABASE_URL=postgres://postgres:chungusbunguswungus@postgreSQL:5432/db
+    depends_on:
+      - postgreSQL
+
+  postgreSQL:
+    image: postgres
+    networks:
+      - chungus
+    ports:
+      - "5432:5432"
+    restart: always
+    shm_size: 128mb # recommended by docs, idk why
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: chungusbunguswungus
+      POSTGRES_DB: db
+
+  adminer:
+    image: adminer
+    networks:
+      - chungus
+    restart: always
+    ports:
+      - 8080:8080
+
+  # debug:
+  #   image: luviz/network-tools
+  #   networks:
+  #     - chungus
+
+
+networks:
+  chungus:
