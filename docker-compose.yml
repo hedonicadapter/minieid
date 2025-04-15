@@ -8,12 +8,14 @@ services:
     volumes:
       - ./server:/app
     environment:
-      - DATABASE_URL=postgres://postgres:chungusbunguswungus@postgreSQL:5432/db
+      - DATABASE_URL=postgres://postgres:chungusbunguswungus@postgresql:5432/db
     depends_on:
-      - postgreSQL
+      - postgresql
 
-  postgreSQL:
-    image: postgres
+  postgresql:
+    build:
+      context: ./images
+      dockerfile: postgreswithdummydata.Dockerfile
     networks:
       - chungus
     ports:
