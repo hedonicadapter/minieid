@@ -50,7 +50,7 @@ func api(conn *pgx.Conn) {
 			c.JSON(http.StatusBadRequest)
 		}
 
-		err := conn.QueryRow(context.Background(), "DELETE FROM users WHERE id=$1").Scan(&id, &name)
+		err := conn.QueryRow(context.Background(), "DELETE FROM users WHERE id=$1", id)
 
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
