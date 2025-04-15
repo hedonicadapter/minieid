@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"os"
-	// "net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
@@ -16,32 +16,51 @@ func dbConnection() *pgx.Conn {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)
 	}
-	defer conn.Close(context.Background())
 
 	return conn
-
 }
 
 func api(conn *pgx.Conn) {
 	r := gin.Default()
 	r.GET("/api", func(c *gin.Context) {
+		var id int64
 		var name string
-		var weight int64
 
-		err := conn.QueryRow(context.Background(), "select name, weight from widgets where id=$1", 42).Scan(&name, &weight)
+		err := conn.QueryRow(context.Background(), "select id, name from users").Scan(&id, &name)
 
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
+
+			// TODO: why os.Exit()? send some error status?
 			os.Exit(1)
 		}
 
-		fmt.Println(name, weight)
+		c.JSON(http.StatusOK, gin.H{
+			"id":   id,
+			"name": name,
+		})
 	})
 	r.POST("/api", func(c *gin.Context) {
 	})
 	r.PUT("/api", func(c *gin.Context) {
 	})
 	r.DELETE("/api", func(c *gin.Context) {
+		id := c.Query("id")
+		if id == nil {
+			c.JSON(http.StatusBadRequest)
+		}
+
+		err := conn.QueryRow(context.Background(), "DELETE FROM users WHERE id=$1").Scan(&id, &name)
+
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
+
+			// TODO: why os.Exit()? send some error status?
+			os.Exit(1)
+		}
+
+		// TODO: should be conditional https://stackoverflow.com/a/2342589
+		c.JSON(http.StatusOK)
 	})
 
 	r.Run()
@@ -50,8 +69,6 @@ func api(conn *pgx.Conn) {
 func main() {
 	conn := dbConnection()
 	api(conn)
-}
 
-// c.JSON(http.StatusOK, gin.H{
-// 	"message": "pong",
-// })
+	defer conn.Close(context.Background())
+}

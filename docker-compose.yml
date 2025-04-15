@@ -1,9 +1,10 @@
 services:
   server:
-    image: golang
+    image: cosmtrek/air
     networks:
       - chungus
-    command: "go run ."
+    ports:
+      - 8080:8080
     working_dir: /app
     volumes:
       - ./server:/app
@@ -16,8 +17,6 @@ services:
     image: postgres
     networks:
       - chungus
-    ports:
-      - "5432:5432"
     restart: always
     shm_size: 128mb # recommended by docs, idk why
     environment:
@@ -27,13 +26,13 @@ services:
     volumes:
       - ./init/:/docker-entrypoint-initdb.d/
 
-  adminer:
-    image: adminer
-    networks:
-      - chungus
-    restart: always
-    ports:
-      - 8080:8080
+  # adminer:
+  #   image: adminer
+  #   networks:
+  #     - chungus
+  #   restart: always
+  #   ports:
+  #     - 8080:8080
 
   # debug:
   #   image: luviz/network-tools
