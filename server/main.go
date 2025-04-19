@@ -130,10 +130,16 @@ func api(conn *pgx.Conn) {
 }
 
 func main() {
-	conn := dbConnection()
-	defer conn.Close(context.Background())
+	// conn := dbConnection()
+	// defer conn.Close(context.Background())
+	//
+	// api(conn)
 
-	api(conn)
+	m := map[string]int{"chungus": 1}
+	fmt.Println(m["bungus"])
+	delete(m, "bungus")
+	fmt.Println(m["bungus"])
+
 }
 
 // go

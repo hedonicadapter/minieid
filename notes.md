@@ -23,7 +23,6 @@ var strBuilder strings.Builder // creates a slice in the background
 strBuilder.WriteString("bungus") // append()
 strBuilder.WriteString("bobungus")
 chungus := strBuilder.String()
-
 ```
 
 import "unicode/utf8"
@@ -94,4 +93,51 @@ accessing map values returns two values
 `delete(map, key)` delete by reference
 
 `for k, v := range array|slice|map {}`
+
+## structs
+like an object in js
+```go
+type myStruct struct {
+    chungus string
+    int
+}
+
+// initialize structs like anythihng else:
+var chungus myStruct{chungus:"bungus", 4}
+var chungus myStruct{"bungus", 4}
+
+// you can also do
+var myStruct = struct{
+    chungus string
+}{"bungus"}
+```
+
+### methods
+structs can  hold functions like class methods
+```go
+func (e myStruct) someFunc() { }
+```
+
+### interface
+```go
+type myInterface interface {
+    myFunct()
+}
+```
+
+## pointers
+```go
+var myPtr *int // is nil, doesnt allocate
+var myPtr *int = new(int) // allocates memory for an int
+```
+
+get value of pointer (dereferencing)
+```go
+*myPtr
+```
+get addy (referencing)
+```go
+   myVar := 42
+   ptr := &myVar
+```
 
