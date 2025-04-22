@@ -141,3 +141,126 @@ get addy (referencing)
    ptr := &myVar
 ```
 
+```go
+*dereference
+&reference
+```
+
+functions always copy params in memory
+```go
+param := 1
+fmt.Println(param) // some memory addy
+
+func chungus(p int) {
+    fmt.Println(p) // some other memory addy
+}
+```
+circumvent with references
+```go
+param := 1
+fmt.Println(param) // some memory addy
+
+func chungus(*p int) {
+    fmt.Println(p) // same memory addy
+}
+```
+
+## Go multi-core concurrency
+
+```go
+go someFunc() // add "go" before a function call
+
+```
+
+wait for concurrency to finish
+```go
+import "sync"
+wg := sync.WaitGroup{}
+
+wg.Add(1) // add whenever we spawn a go routine
+go someFunc() 
+
+wg.Wait() // block code execution until finish
+
+...
+wg.Done()
+
+```
+
+handle transactions
+```go
+import "sync"
+m := sync.Mutex{} // (mutual exclusion)
+m.Lock() // go routines will reach this and check to see if this section has been locked by another go routine and stop/continue accordingly
+// write data
+m.Unlock()
+```
+
+full example
+```go
+import "sync"
+
+func main() {
+    m := sync.Mutex{}       
+    wg := sync.WaitGroup{} 
+
+    data := map[string]string{"chungus": "bungus"}
+
+    for k, v := range data {
+        wg.Add(1)             // Add 1 goroutine to WaitGroup counter
+        go concatData(k, &data, &m, &wg)
+    }
+
+    wg.Wait()  // Wait for all goroutines
+}
+
+func concatData(key string, data *map[string]string, m *sync.Mutex, wg *sync.WaitGroup) { // referencing because otherwise each parameter would become a copy and locking/unlocking would happen to copies
+    defer wg.Done()     // Ensure WaitGroup counter is decremented
+    defer m.Unlock()    // Ensure mutex is unlocked
+    
+    m.Lock()            
+    (*data)[key] = (*data)[key] = + " example" // awkward accessor bc of operator precedence ([] comes before * so data is accessed before specifying dereference)
+}
+```
+
+theres also `sync.RWMutex{}` which additionally provide `RLock()` & `RUnlock()`
+
+## Channels
+- hold data
+- thread safety (read and write racing)
+- can be listened to
+
+```go
+c := make(chan int)
+c <- 42 // assign or retrieve value
+
+
+```
+
+THERES MORE
+
+
+## Generics
+
+```go
+func genericFunc[T int | string](someVar T) T{
+    var idk T
+    idk = someVar
+
+    return idk
+}
+
+genericFunc[string]("chungus")
+
+```
+```go
+type myStruct [T int | string]struct {
+    myAttr string
+    myOtherAttr T
+}
+
+```
+
+theres also any, but for any to work whatever operation you do on it must be compatible with any type
+
+

@@ -135,11 +135,8 @@ func main() {
 	//
 	// api(conn)
 
-	m := map[string]int{"chungus": 1}
-	fmt.Println(m["bungus"])
-	delete(m, "bungus")
-	fmt.Println(m["bungus"])
-
+	c := make(chan int)
+	c <- 1
 }
 
 // go
